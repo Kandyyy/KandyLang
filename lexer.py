@@ -12,7 +12,7 @@ class Token:
         if self.value != None:
             return f"{self.token_type}:{self.value}"
         else:
-            return "No value"
+            return f"{self.token_type}"
 
 
 class Lexer:
@@ -37,11 +37,12 @@ class Lexer:
             if self.current_char == "+":
                 tokens.append(Token(PLUS, self.current_char))
                 self.advance()
+            if self.current_char == "(":
+                tokens.append(Token(LBRAC, self.current_char))
+                self.advance()
         return tokens
 
 def run(char):
     lexer = Lexer(char)
     tokens = lexer.make_tokens()
     return tokens
-
-print(Token(PLUS))
