@@ -1,18 +1,16 @@
 
-LBRAC = "LBRAC"
-RBRAC = "BRAC"
-PLUS = "PLUS"
-
+DIGITS = "0123456789"
 class Token:
     def __init__(self, token_type, value=None):
         self.token_type = token_type
         self.value = value
 
     def __repr__(self) -> str:
+        x = [self.token_type,self.value]
         if self.value != None:
-            return f"{self.token_type}:{self.value}"
+            return str(tuple(x))
         else:
-            return f"{self.token_type}"
+            return str(tuple(x))
 
 
 class Lexer:
@@ -28,17 +26,27 @@ class Lexer:
         else:
             self.current_char = None
 
+    def generateNums(self):
+        self.advance()
+        nums = ""
+        while self.current_char != None and self.current_char in DIGITS:
+            nums+=self.current_char
+        return Token("INT",int(nums)) 
+
     def make_tokens(self):
         self.advance()
         tokens = []
         while self.current_char != None:
             if self.current_char == " \t":
                 self.advance()
-            if self.current_char == "+":
-                tokens.append(Token(PLUS, self.current_char))
+            if self.current_char in "+-*/":
+                tokens.append(Token(self.current_char))
                 self.advance()
-            if self.current_char == "(":
-                tokens.append(Token(LBRAC, self.current_char))
+            elif self.current_char in "(){},;:[]":
+                tokens.append(Token(self.current_char))
+                self.advance()
+            elif self.current_char in DIGITS:
+                tokens.append(self.generateNums())
                 self.advance()
         return tokens
 
