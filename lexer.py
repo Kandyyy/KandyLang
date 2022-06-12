@@ -27,22 +27,28 @@ class Lexer:
             self.current_char = None
 
     def generateNums(self):
-        self.advance()
         nums = ""
-        while self.current_char != None and self.current_char in DIGITS:
+        decimal = 0
+        while self.current_char != None and self.current_char in DIGITS or self.current_char == ".":
+            if self.current_char == ".":
+                if decimal == 0:
+                    decimal+=1
+                else:
+                    break
             nums+=self.current_char
-        return Token("INT",int(nums)) 
+            self.advance()
+        return Token("INT",int(nums)) if decimal == 0 else Token("FLOAT",float(nums))
 
     def make_tokens(self):
         self.advance()
         tokens = []
         while self.current_char != None:
-            if self.current_char == " \t":
+            if self.current_char in " \t":
                 self.advance()
             if self.current_char in "+-*/":
                 tokens.append(Token(self.current_char))
                 self.advance()
-            elif self.current_char in "(){},;:[]":
+            elif self.current_char in "(){},;:[]=":
                 tokens.append(Token(self.current_char))
                 self.advance()
             elif self.current_char in DIGITS:
