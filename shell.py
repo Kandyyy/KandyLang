@@ -2,5 +2,5 @@ import lexer
 
 while True:
     text = input("Kandy >")
-    output = lexer.run(text)
-    print(output)
+    output,error = lexer.run(text)
+    print(error.print_string()) if error else print(output)

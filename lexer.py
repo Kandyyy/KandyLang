@@ -1,5 +1,18 @@
 
 DIGITS = "0123456789"
+
+class Error:
+    def __init__(self, error,details) -> None:
+        self.error = error
+        self.details = details
+    
+    def print_string(self) -> str:
+        return f"{self.error}: {self.details}"
+
+class IllegalCharError(Error):
+    def __init__(self, details) -> None:
+        super().__init__("Illegal Character", details)
+
 class Token:
     def __init__(self, token_type, value=None):
         self.token_type = token_type
@@ -34,6 +47,7 @@ class Lexer:
                 if decimal == 0:
                     decimal+=1
                 else:
+                    print("Incorrect decimal dot placement")
                     break
             nums+=self.current_char
             self.advance()
@@ -43,7 +57,7 @@ class Lexer:
         self.advance()
         tokens = []
         while self.current_char != None:
-            if self.current_char in " \t":
+            if self.current_char in " \n":
                 self.advance()
             if self.current_char in "+-*/":
                 tokens.append(Token(self.current_char))
@@ -54,9 +68,12 @@ class Lexer:
             elif self.current_char in DIGITS:
                 tokens.append(self.generateNums())
                 self.advance()
-        return tokens
+            else:
+                charError = IllegalCharError(self.current_char)
+                return [], charError
+        return tokens,None
 
 def run(char):
     lexer = Lexer(char)
-    tokens = lexer.make_tokens()
-    return tokens
+    tokens, error = lexer.make_tokens()
+    return tokens, error
