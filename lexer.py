@@ -1,4 +1,4 @@
-
+import re
 DIGITS = "0123456789"
 
 class Error:
@@ -52,6 +52,13 @@ class Lexer:
             nums+=self.current_char
             self.advance()
         return Token("INT",int(nums)) if decimal == 0 else Token("FLOAT",float(nums))
+    
+    def generateSymbols(self):
+        symbol = ""
+        while self.current_char!=None and re.match("[_a-zA-Z0-9]",self.current_char):
+            symbol+=self.current_char
+            self.advance()
+        return Token("SYMBOL",symbol)
 
     def make_tokens(self):
         self.advance()
@@ -67,6 +74,9 @@ class Lexer:
                 self.advance()
             elif self.current_char in DIGITS:
                 tokens.append(self.generateNums())
+                self.advance()
+            elif re.match("[_a-zA-Z]",self.current_char):
+                tokens.append(self.generateSymbols())
                 self.advance()
             else:
                 charError = IllegalCharError(self.current_char)
